@@ -136,57 +136,56 @@ if image_source:
 
     st.markdown("---")
 
-    # Extract button
-    if st.button(text['extract'], type="primary", use_container_width=True):
-        with st.spinner(text['processing']):
-            data, error = extract_invoice_data(processed_image, st.session_state.language)
+    # Auto-extract without button
+    with st.spinner(text['processing']):
+        data, error = extract_invoice_data(processed_image, st.session_state.language)
 
-            if error:
-                st.error(f"{text['error']}: {error}")
-            elif data:
-                st.success(text['success'])
+        if error:
+            st.error(f"{text['error']}: {error}")
+        elif data:
+            st.success(text['success'])
 
-                # Basic info
-                st.subheader(text['info'])
-                col1, col2, col3 = st.columns(3)
+            # Basic info
+            st.subheader(text['info'])
+            col1, col2, col3 = st.columns(3)
 
-                with col1:
-                    st.metric("Store", data.get('store_name', text['na']))
-                    st.metric("Business", data.get('business_type', text['na']))
-                    st.metric("Payment", data.get('payment_method', text['na']))
+            with col1:
+                st.metric("Store", data.get('store_name', text['na']))
+                st.metric("Business", data.get('business_type', text['na']))
+                st.metric("Payment", data.get('payment_method', text['na']))
 
-                with col2:
-                    st.metric("Date", data.get('date', text['na']))
-                    st.metric("Invoice #", data.get('invoice_number', text['na']))
-                    if data.get('card_number'):
-                        st.metric("Card", data.get('card_number'))
+            with col2:
+                st.metric("Date", data.get('date', text['na']))
+                st.metric("Invoice #", data.get('invoice_number', text['na']))
+                if data.get('card_number'):
+                    st.metric("Card", data.get('card_number'))
 
-                with col3:
-                    st.metric("Items", data.get('items_count', len(data.get('items', []))))
-                    st.metric("Total", f"{data.get('total_amount', 0)} {data.get('currency', 'SAR')}")
+            with col3:
+                st.metric("Items", data.get('items_count', len(data.get('items', []))))
+                st.metric("Total", f"{data.get('total_amount', 0)} {data.get('currency', 'SAR')}")
 
-                # Items
-                if data.get('items'):
-                    st.subheader(text['items'])
-                    for idx, item in enumerate(data['items'], 1):
-                        with st.expander(f"{idx}. {item.get('name', text['na'])}"):
-                            col1, col2, col3 = st.columns(3)
-                            with col1:
-                                st.write(f"**Qty:** {item.get('quantity', text['na'])}")
-                            with col2:
-                                st.write(f"**Price:** {item.get('unit_price', text['na'])}")
-                            with col3:
-                                st.write(f"**Total:** {item.get('total', text['na'])}")
+            # Items
+            if data.get('items'):
+                st.subheader(text['items'])
+                for idx, item in enumerate(data['items'], 1):
+                    with st.expander(f"{idx}. {item.get('name', text['na'])}"):
+                        col1, col2, col3 = st.columns(3)
+                        with col1:
+                            st.write(f"**Qty:** {item.get('quantity', text['na'])}")
+                        with col2:
+                            st.write(f"**Price:** {item.get('unit_price', text['na'])}")
+                        with col3:
+                            st.write(f"**Total:** {item.get('total', text['na'])}")
 
-                # Full JSON
-                with st.expander("📄 Full JSON"):
-                    st.json(data)
+            # Full JSON
+            with st.expander("📄 Full JSON"):
+                st.json(data)
 
-                # Download
-                json_string = json.dumps(data, ensure_ascii=False, indent=2)
-                st.download_button(
-                    text['download'],
-                    json_string,
-                    "invoice_data.json",
-                    "application/json"
-                )
+            # Download
+            json_string = json.dumps(data, ensure_ascii=False, indent=2)
+            st.download_button(
+                text['download'],
+                json_string,
+                "invoice_data.json",
+                "application/json"
+            )
