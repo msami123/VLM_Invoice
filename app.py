@@ -19,6 +19,7 @@ if not GEMINI_API_KEY:
 
 genai.configure(api_key=GEMINI_API_KEY)
 
+
 # UI text for both languages
 UI_TEXT = {
     'ar': {
@@ -147,22 +148,61 @@ if image_source:
 
             # Basic info
             st.subheader(text['info'])
-            col1, col2, col3 = st.columns(3)
 
+            # Row 1: Store Info
+            col1, col2, col3 = st.columns(3)
             with col1:
                 st.metric("Store", data.get('store_name', text['na']))
-                st.metric("Business", data.get('business_type', text['na']))
-                st.metric("Payment", data.get('payment_method', text['na']))
-
             with col2:
-                st.metric("Date", data.get('date', text['na']))
-                st.metric("Invoice #", data.get('invoice_number', text['na']))
-                if data.get('card_number'):
-                    st.metric("Card", data.get('card_number'))
-
+                st.metric("Tax Number", data.get('tax_number', text['na']))
             with col3:
-                st.metric("Items", data.get('items_count', len(data.get('items', []))))
-                st.metric("Total", f"{data.get('total_amount', 0)} {data.get('currency', 'SAR')}")
+                st.metric("CR Number", data.get('cr_number', text['na']))
+
+            # Row 2: Branch, Business, Payment
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Branch", data.get('branch', text['na']))
+            with col2:
+                st.metric("Business Type", data.get('business_type', text['na']))
+            with col3:
+                st.metric("Payment Method", data.get('payment_method', text['na']))
+
+            # Row 3: Date, Time, Invoice
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Date", data.get('date', text['na']))
+            with col2:
+                st.metric("Time", data.get('time', text['na']))
+            with col3:
+                st.metric("Invoice #", data.get('invoice_number', text['na']))
+
+            # Row 4: Card, Delivery, Cashier
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Card Number", data.get('card_number', text['na']))
+            with col2:
+                st.metric("🛵 Delivery App", data.get('delivery_app', text['na']))
+            with col3:
+                st.metric("Cashier", data.get('cashier', text['na']))
+
+            # Row 5: Financial Summary
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Subtotal", f"{data.get('subtotal', 0)} {data.get('currency', 'SAR')}")
+            with col2:
+                st.metric("Tax", f"{data.get('tax_amount', 0)} ({data.get('tax_percentage', 0)}%)")
+            with col3:
+                st.metric("Discount", f"{data.get('discount', 0)} {data.get('currency', 'SAR')}")
+
+            # Row 6: Items & Total
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Items Count", data.get('items_count', len(data.get('items', []))))
+            with col2:
+                st.metric("💰 Total Amount", f"{data.get('total_amount', 0)} {data.get('currency', 'SAR')}")
+            with col3:
+                if data.get('additional_notes'):
+                    st.metric("Notes", data.get('additional_notes', text['na']))
 
             # Items
             if data.get('items'):
