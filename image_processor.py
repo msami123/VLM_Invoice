@@ -166,7 +166,7 @@ def extract_documents(
         image = preprocess_image(image)
 
     # Load model
-    model = YOLO('invoice-extractor-final/best (1).pt')
+    model = YOLO('best (1).pt')
 
     # Run prediction
     results = model.predict(
